@@ -3,4 +3,5 @@
 "git.ignoreLimitWarning": true
 }
 
-// "python.pythonPath": "/opt/anaconda3/bin/python" <---- Original PythonPath
+// "python.pythonPath": "/opt/anaconda3/bin/python" <---- Original PythonPath for Anaconda Python if I decide
+//                                                        to go back to it.
