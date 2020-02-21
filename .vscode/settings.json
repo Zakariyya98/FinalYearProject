@@ -1,0 +1,5 @@
+{
+ "python.pythonPath":"/Library/Frameworks/Python.framework/Versions/3.7/bin/python3"
+}
+
+// "python.pythonPath": "/opt/anaconda3/bin/python" <---- Original PythonPath
