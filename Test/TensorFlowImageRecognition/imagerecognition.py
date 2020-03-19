@@ -1,54 +1,102 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import tensorflow as tf 
-import keras
-#Keras doesnt wanna work yet ????
-import tensorflow.keras.models 
+from tensorflow import keras
 
-#import Sequential
-import tensorflow.keras.layers 
-#import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
-import tensorflow.keras.preprocessing.image 
-
-#import ImageDataGenerator
-
-import os
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
+
+print (tf.__version__)
 
 #Dataset
-mnist = tf.keras.datasets.mnist
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
-x_train, x_test = x_train / 255.0, x_test / 255.0
+fashion_mnist = keras.datasets.fashion_mnist
+(train_images, train_labels), (test_image, test_labels) = fashion_mnist.load_data()
+class_names =['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat', 'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+train_images.shape
 
-model = tf.keras.models.Sequential([
-    tf.keras.layers.Flatten(input_shape=(28, 28)),
-    tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dropout(0.2),
-    tf.keras.layers.Dense(10)
+len(train_labels)
+
+train_labels
+
+test_image.shape
+
+len(test_labels)
+
+plt.figure()
+plt.imshow(train_images[0])
+plt.colorbar()
+plt.grid(False)
+plt.show()
+
+train_images = train_images / 255.0
+
+test_image = test_image / 255.0
+
+plt.figure(figsize=(10,10))
+for i in range (25):
+    plt.sublot(5,5, i+1)
+    plt.xticks([])
+    plt.yticks([])
+    plt.grid(False)
+    plt.imshow(train_images[i], cmap=plt.cm.binary)
+    plt.xlabel(class_names[train_labels[i]])
+plt.show()
+
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28,28)),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dense(10)
 ])
-
-predictions = model(x_train[:1]).numpy()
-predictions
-
-tf.nn.softmax(predictions).numpy()
-
-
-loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
-loss_fn(y_train[:1], predictions).numpy()
 
 model.compile(optimizer = 'adam',
-              loss = loss_fn,
-              metrics=['accuracy'])
+    loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+    metrics=['accuracy']
+    )
 
-model.fit(x_train, y_train, epochs=5)
+model.fit(train_images, train_labels, epochs=10)
 
-model.evaluate(x_test, y_test, verbose=2)
+test_loss, test_acc = model.evaluate(test_image, test_labels, verbose=2)
 
-probability_model = tf.karas.Sequential([
-    model,
-    tf.keras.layers.Softmax()
-])
+print('\nTest accuracy:' , test_acc)
 
-probability_model(x_test[:5])
+probability_model = tf.keras.Sequential([model,
+                                        tf.keras.layers.Softmax()])
+
+predictions = probability_model.predict(test_image)
+
+predictions[0]
+
+np.argmax(predictions[0])
+
+test_labels[0]
+
+def plot_image(i, predictions_array, train_label, img):
+    predictions_array, true_label, img = predictions_array, true_label[i], img[i]
+    plt.grid(False)
+    plt.xticks([])
+    plt.yticks([])
+
+    plt.imshow(img, cmap=plt.cm.binary)
+
+    predicted_label = np.argmax(predictions_array)
+    if predicted_label == true_label:
+        color = 'blue'
+    else:
+        colur = 'red'
+    
+    plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+                               100*np.max(predictions_array),
+                               class_names[true_label]),
+                               color=color)
+
+    def plot_value_array(i, predictions_array, true_label):
+        predictions_array, true_label = predictions_array, true_label[i]
+        plt.grid(False)
+        plt.xticks(range(10))
+        plt.yticks([])
+        thisplot = plt.bar(range(10), predictions_array, color ="#777777")
+        plt.ylim([0, 1])
+        predicted_label = np.argmax(predictions_array)
+
+        thisplot[predicted_label].set_color('red')
+        thisplot[true_label].set_color('blue')
