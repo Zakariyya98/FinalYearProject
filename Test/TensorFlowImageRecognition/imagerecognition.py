@@ -34,7 +34,7 @@ test_image = test_image / 255.0
 
 plt.figure(figsize=(10,10))
 for i in range (25):
-    plt.sublot(5,5, i+1)
+    plt.subplot(5,5, i+1)
     plt.xticks([])
     plt.yticks([])
     plt.grid(False)
@@ -100,3 +100,19 @@ def plot_image(i, predictions_array, train_label, img):
 
         thisplot[predicted_label].set_color('red')
         thisplot[true_label].set_color('blue')
+
+    i = 0
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    plot_image(i, predictions[i], test_labels, test_image)
+    plt.subplot(1,2,2)
+    plot_value_array(i, predictions[i], test_labels)
+    plt.show()
+
+    i = 12
+    plt.figure(figsize=(6,3))
+    plt.subplot(1,2,1)
+    plot_image(i, predictions[i], test_labels, test_image)
+    plt.subplot(1,2,2)
+    plot_value_array(i, predictions[i], test_labels)
+    plt.show()
